@@ -2,36 +2,29 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CarController;
+use App\Http\Controllers\BookingController;
 
-// ---------------------------------------------------------
 // PUBLIC ROUTES
-// ---------------------------------------------------------
-
-// Authentication
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-// Cars (Guests can view cars)
-// Route::get('/cars', [CarController::class, 'index']); // We will create this next
-// Route::get('/cars/{car}', [CarController::class, 'show']); 
+// Anyone can view cars
+Route::get('/cars', [CarController::class, 'index']);
+Route::get('/cars/{car}', [CarController::class, 'show']);
 
-
-// ---------------------------------------------------------
-// PROTECTED ROUTES (Requires valid Sanctum Token)
-// ---------------------------------------------------------
+// PROTECTED ROUTES
 Route::middleware('auth:sanctum')->group(function () {
-
-    // Auth User
     Route::get('/user', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    // Customer Routes (Bookings)
-    // Route::apiResource('bookings', BookingController::class);
+    // Bookings (Customers & Admins)
+    Route::get('/bookings', [BookingController::class, 'index']);
+    Route::post('/bookings', [BookingController::class, 'store']);
+    Route::delete('/bookings/{booking}', [BookingController::class, 'destroy']);
 
-    // Admin Routes (Manage Cars and View all Bookings)
-    // We will use a custom middleware 'admin' later, or handle it in policies/controllers
-    Route::prefix('admin')->group(function () {
-        // Route::apiResource('cars', CarController::class)->except(['index', 'show']);
-        // Route::get('/bookings', [AdminBookingController::class, 'index']);
-    });
+    // Car Management (Admins only - secured inside StoreCarRequest and controller methods)
+    Route::post('/cars', [CarController::class, 'store']);
+    Route::put('/cars/{car}', [CarController::class, 'update']);
+    Route::delete('/cars/{car}', [CarController::class, 'destroy']);
 });

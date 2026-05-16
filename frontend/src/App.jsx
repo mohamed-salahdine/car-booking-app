@@ -3,50 +3,57 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-// We will create these pages in the next step, for now, we use simple placeholders
-const Home = () => (
-  <div className="p-8 text-2xl font-bold">Home Page (Public)</div>
-);
-const Login = () => <div className="p-8 text-2xl font-bold">Login Page</div>;
-const CustomerDashboard = () => (
-  <div className="p-8 text-2xl font-bold text-green-600">
-    Customer Dashboard
-  </div>
-);
-const AdminDashboard = () => (
-  <div className="p-8 text-2xl font-bold text-red-600">Admin Dashboard</div>
-);
+import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import BookCar from "./pages/BookCar";
+import CustomerDashboard from "./pages/CustomerDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
   return (
     <AuthProvider>
       <Router>
-        {/* Optional: Add a Navbar here later */}
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
+        <div className="min-h-screen bg-gray-50 text-gray-900">
+          <Navbar />
+          <main>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
 
-          {/* Protected Routes (Customers & Admins) */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <CustomerDashboard />
-              </ProtectedRoute>
-            }
-          />
+              {/* Protected Routes (Customers) */}
+              <Route
+                path="/book/:id"
+                element={
+                  <ProtectedRoute>
+                    <BookCar />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <CustomerDashboard />
+                  </ProtectedRoute>
+                }
+              />
 
-          {/* Admin Only Routes */}
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute requireAdmin={true}>
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
+              {/* Admin Only Routes */}
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </main>
+        </div>
       </Router>
     </AuthProvider>
   );

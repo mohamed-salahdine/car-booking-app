@@ -9,6 +9,11 @@ const BookCar = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  if (user && user.role === "admin") {
+    navigate("/");
+    return null;
+  }
+
   const [car, setCar] = useState(null);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");

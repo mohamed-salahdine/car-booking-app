@@ -8,7 +8,8 @@ class StoreBookingRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user() !== null;
+        // Must be logged in AND NOT be an admin
+        return $this->user() && !$this->user()->isAdmin();
     }
 
     public function rules(): array

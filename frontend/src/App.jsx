@@ -10,6 +10,7 @@ import Register from "./pages/Register";
 import BookCar from "./pages/BookCar";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import EditCar from './pages/EditCar';
 
 function App() {
   return (
@@ -48,6 +49,14 @@ function App() {
                 element={
                   <ProtectedRoute requireAdmin={true}>
                     <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/edit-car/:id"
+                element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <EditCar />
                   </ProtectedRoute>
                 }
               />

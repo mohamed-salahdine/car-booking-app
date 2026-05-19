@@ -7,6 +7,7 @@ const EditCar = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  // 1. Added 'images: []' to initial state
   const [formData, setFormData] = useState({
     make: "",
     model: "",
@@ -14,6 +15,7 @@ const EditCar = () => {
     registration_number: "",
     daily_price: "",
     is_available: true,
+    images: [],
   });
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
@@ -22,7 +24,8 @@ const EditCar = () => {
     const fetchCar = async () => {
       try {
         const response = await api.get(`/cars/${id}`);
-        setFormData(response.data.data);
+        // Load existing data, but reset the images array so the file input starts fresh
+        setFormData({ ...response.data.data, images: [] });
       } catch (error) {
         setMessage("Failed to load car details.");
       } finally {
@@ -32,14 +35,36 @@ const EditCar = () => {
     fetchCar();
   }, [id]);
 
+  // 2. The SINGLE, correct handleUpdate function
   const handleUpdate = async (e) => {
     e.preventDefault();
     setMessage("");
+
+    const data = new FormData();
+    data.append("make", formData.make);
+    data.append("model", formData.model);
+    data.append("year", formData.year);
+    data.append("registration_number", formData.registration_number);
+    data.append("daily_price", formData.daily_price);
+    data.append("is_available", formData.is_available ? 1 : 0);
+
+    // Append images if the admin selected new ones
+    if (formData.images && formData.images.length > 0) {
+      for (let i = 0; i < formData.images.length; i++) {
+        data.append("images[]", formData.images[i]);
+      }
+    }
+
+    // LARAVEL TRICK: Spoof the PUT request because of multipart/form-data
+    data.append("_method", "PUT");
+
     try {
-      await api.put(`/cars/${id}`, formData);
+      await api.post(`/cars/${id}`, data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       navigate("/"); // Go back to home after successful update
     } catch (error) {
-      setMessage("Failed to update car. Check inputs.");
+      setMessage(error.response?.data?.message || "Failed to update car.");
     }
   };
 
@@ -129,7 +154,24 @@ const EditCar = () => {
             Available for booking
           </label>
         </div>
+
+        {/* 3. Added Image Input */}
         <div className="md:col-span-2 mt-4">
+          <label className="block text-gray-700 mb-1">
+            Upload New Images (Optional)
+          </label>
+          <input
+            type="file"
+            multiple
+            accept="image/*"
+            className="w-full border p-2 rounded bg-white focus:ring-2 focus:ring-blue-500"
+            onChange={(e) =>
+              setFormData({ ...formData, images: e.target.files })
+            }
+          />
+        </div>
+
+        <div className="md:col-span-2 mt-2">
           <button
             type="submit"
             className="w-full bg-blue-600 text-white font-bold p-3 rounded hover:bg-blue-700 transition"

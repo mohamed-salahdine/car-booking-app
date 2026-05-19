@@ -6,47 +6,88 @@ use App\Models\Car;
 use App\Http\Requests\StoreCarRequest;
 use App\Http\Resources\CarResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CarController extends Controller
 {
-    // Public: List all available cars
+    // 1. UPDATED FOR PAGINATION
     public function index(Request $request)
     {
-        $query = Car::query();
+        $query = Car::query()->latest();
 
-        // Optional: Filter by availability
         if ($request->has('available')) {
             $query->where('is_available', $request->boolean('available'));
         }
 
-        return CarResource::collection($query->get());
+        // Return 6 cars per page. Laravel Resources automatically format pagination data!
+        return CarResource::collection($query->paginate(6));
     }
 
-    // Admin: Add a new car
+    // 2. UPDATED FOR IMAGE UPLOADS
     public function store(StoreCarRequest $request)
     {
-        $car = Car::create($request->validated());
+        $data = $request->validated();
+        $imagePaths = [];
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imagePaths[] = $image->store('cars', 'public'); // Saves to storage/app/public/cars
+            }
+        }
+
+        $data['images'] = $imagePaths;
+        $car = Car::create($data);
+
         return new CarResource($car);
     }
 
-    // Public: View single car
     public function show(Car $car)
     {
         return new CarResource($car);
     }
 
-    // Admin: Update car
+    // 3. UPDATED TO HANDLE NEW IMAGES ON EDIT
     public function update(StoreCarRequest $request, Car $car)
     {
-        $car->update($request->validated());
+        $data = $request->validated();
+
+        if ($request->hasFile('images')) {
+            // Optional: Delete old images from storage to save space
+            if (is_array($car->images)) {
+                foreach ($car->images as $oldImage) {
+                    if (!str_starts_with($oldImage, 'http')) {
+                        Storage::disk('public')->delete($oldImage);
+                    }
+                }
+            }
+
+            $imagePaths = [];
+            foreach ($request->file('images') as $image) {
+                $imagePaths[] = $image->store('cars', 'public');
+            }
+            $data['images'] = $imagePaths;
+        } else {
+            // Keep existing images if no new ones are uploaded
+            unset($data['images']);
+        }
+
+        $car->update($data);
         return new CarResource($car);
     }
 
-    // Admin: Delete car
     public function destroy(Request $request, Car $car)
     {
         if (!$request->user()->isAdmin()) {
             return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        // Optional: Delete images from server when car is deleted
+        if (is_array($car->images)) {
+            foreach ($car->images as $image) {
+                if (!str_starts_with($image, 'http')) {
+                    Storage::disk('public')->delete($image);
+                }
+            }
         }
 
         $car->delete();

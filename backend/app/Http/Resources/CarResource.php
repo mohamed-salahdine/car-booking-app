@@ -17,7 +17,11 @@ class CarResource extends JsonResource
             'registration_number' => $this->registration_number,
             'daily_price' => (float) $this->daily_price,
             'is_available' => (bool) $this->is_available,
-            'images' => $this->images ?? [],
+
+            // This safely maps the image paths to full URLs for the React frontend
+            'images' => collect($this->images ?? [])->map(function ($path) {
+                return str_starts_with($path, 'http') ? $path : asset('storage/' . $path);
+            })->toArray(),
         ];
     }
 }

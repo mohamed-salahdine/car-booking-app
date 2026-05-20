@@ -1,4 +1,3 @@
-// frontend/src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -8,8 +7,17 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import BookCar from "./pages/BookCar";
+
+// Customer Portal
 import CustomerDashboard from "./pages/CustomerDashboard";
+import CustomerBookings from "./pages/customer/CustomerBookings";
+import CustomerProfile from "./pages/customer/CustomerProfile";
+
+// Admin Portal
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminFleet from "./pages/admin/AdminFleet";
+import AdminBookings from "./pages/admin/AdminBookings";
+import AdminUsers from "./pages/admin/AdminUsers";
 import EditCar from './pages/EditCar';
 
 function App() {
@@ -42,6 +50,22 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/dashboard/bookings"
+                element={
+                  <ProtectedRoute>
+                    <CustomerBookings />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/dashboard/profile"
+                element={
+                  <ProtectedRoute>
+                    <CustomerProfile />
+                  </ProtectedRoute>
+                }
+              />
 
               {/* Admin Only Routes */}
               <Route
@@ -49,6 +73,30 @@ function App() {
                 element={
                   <ProtectedRoute requireAdmin={true}>
                     <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/fleet"
+                element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <AdminFleet />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/bookings"
+                element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <AdminBookings />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/users"
+                element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <AdminUsers />
                   </ProtectedRoute>
                 }
               />

@@ -1,8 +1,8 @@
-// frontend/src/pages/BookCar.jsx
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import { CalendarRange, DollarSign, CarFront, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 
 const BookCar = () => {
   const { id } = useParams();
@@ -59,12 +59,23 @@ const BookCar = () => {
     }
   };
 
-  if (loading)
+  if (loading) {
     return (
-      <div className="text-center mt-20 text-xl font-semibold">Loading...</div>
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <Loader2 className="w-12 h-12 text-brand-500 animate-spin mb-4" />
+        <h2 className="text-xl font-medium text-navy-800">Preparing your vehicle...</h2>
+      </div>
     );
-  if (!car)
-    return <div className="text-center mt-20 text-red-500">Car not found.</div>;
+  }
+
+  if (!car) {
+    return (
+      <div className="text-center mt-20 text-red-500 font-semibold bg-red-50 p-6 rounded-xl max-w-md mx-auto">
+        <AlertCircle className="w-10 h-10 mx-auto mb-2 text-red-400" />
+        Vehicle not found.
+      </div>
+    );
+  }
 
   // Calculate total price dynamically on the frontend
   const calculateTotal = () => {
@@ -80,60 +91,95 @@ const BookCar = () => {
   if (user && user.role === "admin") return null;
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-10 card-premium">
-      <h2 className="text-4xl font-extrabold mb-8 text-navy-900 tracking-tight">
-        Book <span className="text-brand-600">{car.make} {car.model}</span>
-      </h2>
+    <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      <div className="card-premium p-10 relative overflow-hidden">
+        {/* Background Decorative */}
+        <div className="absolute -top-24 -right-24 w-64 h-64 bg-brand-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 pointer-events-none"></div>
+        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 pointer-events-none"></div>
 
-      <div className="mb-8 p-6 bg-gray-50 rounded-2xl flex justify-between items-center border border-gray-100 shadow-sm">
-        <div>
-          <p className="text-gray-500 font-bold uppercase tracking-wider text-xs mb-1">Daily Rate</p>
-          <p className="text-3xl font-extrabold text-navy-900">${car.daily_price}</p>
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between mb-10 gap-6">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2.5 bg-navy-50 rounded-xl text-navy-900">
+                <CarFront className="w-6 h-6" />
+              </div>
+              <h2 className="text-4xl md:text-5xl font-extrabold text-navy-900 tracking-tight">
+                {car.make} <span className="text-brand-600 font-light">{car.model}</span>
+              </h2>
+            </div>
+            <p className="text-gray-500 font-medium ml-1">Complete your reservation details below</p>
+          </div>
+          <div className="bg-gray-50 px-5 py-3 rounded-2xl border border-gray-100 flex flex-col items-end">
+            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Daily Rate</span>
+            <span className="text-3xl font-extrabold text-navy-900 flex items-center"><DollarSign className="w-6 h-6 text-brand-600 mr-0.5" />{car.daily_price}</span>
+          </div>
         </div>
-        <div className="text-right">
-          <p className="text-gray-500 font-bold uppercase tracking-wider text-xs mb-1">Estimated Total</p>
-          <p className="text-3xl font-extrabold text-brand-600">
-            ${calculateTotal()}
-          </p>
-        </div>
+
+        {error && (
+          <div className="mb-8 flex items-start gap-3 bg-red-50 p-4 rounded-xl border border-red-100">
+            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <p className="text-red-700 font-medium">{error}</p>
+          </div>
+        )}
+
+        <form onSubmit={handleBooking} className="space-y-8 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-3">
+              <label className="block text-sm font-bold text-navy-900 ml-1 uppercase tracking-wide">Pick-up Date</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <CalendarRange className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="date"
+                  className="input-premium pl-12"
+                  value={startDate}
+                  min={new Date().toISOString().split("T")[0]}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+            <div className="space-y-3">
+              <label className="block text-sm font-bold text-navy-900 ml-1 uppercase tracking-wide">Drop-off Date</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <CalendarRange className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="date"
+                  className="input-premium pl-12"
+                  value={endDate}
+                  min={startDate || new Date().toISOString().split("T")[0]}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Dynamic Summary Panel */}
+          <div className={`transition-all duration-500 overflow-hidden rounded-2xl border ${startDate && endDate ? 'border-brand-200 bg-brand-50 max-h-40 opacity-100 p-6' : 'border-transparent max-h-0 opacity-0 p-0'}`}>
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-brand-900 font-bold mb-1">Estimated Total</p>
+                <p className="text-brand-700/80 text-sm font-medium">Includes base rate and standard insurance</p>
+              </div>
+              <div className="text-4xl font-extrabold text-brand-600 tracking-tight">
+                ${calculateTotal()}
+              </div>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="btn-primary w-full text-lg py-5 flex justify-center items-center gap-2 group"
+          >
+            <CheckCircle2 className="w-6 h-6 group-hover:scale-110 transition-transform" />
+            Confirm Reservation
+          </button>
+        </form>
       </div>
-
-      {error && (
-        <p className="text-red-600 font-bold bg-red-50 p-4 rounded-xl mb-6">{error}</p>
-      )}
-
-      <form onSubmit={handleBooking} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-bold text-navy-900 mb-2 uppercase tracking-wide">Pick-up Date</label>
-            <input
-              type="date"
-              className="input-premium"
-              value={startDate}
-              min={new Date().toISOString().split("T")[0]}
-              onChange={(e) => setStartDate(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-bold text-navy-900 mb-2 uppercase tracking-wide">Drop-off Date</label>
-            <input
-              type="date"
-              className="input-premium"
-              value={endDate}
-              min={startDate || new Date().toISOString().split("T")[0]}
-              onChange={(e) => setEndDate(e.target.value)}
-              required
-            />
-          </div>
-        </div>
-        <button
-          type="submit"
-          className="btn-primary w-full text-lg py-4 mt-8"
-        >
-          Confirm Reservation
-        </button>
-      </form>
     </div>
   );
 };

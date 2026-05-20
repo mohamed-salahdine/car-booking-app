@@ -3,7 +3,7 @@ import api from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 
 const CustomerProfile = () => {
-  const { user, login } = useAuth(); // login function might just update user context if we pass it, or we just rely on local state
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     name: user?.name || "",
     email: user?.email || "",
@@ -15,6 +15,7 @@ const CustomerProfile = () => {
 
   useEffect(() => {
     if (user) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData((prev) => ({ ...prev, name: user.name, email: user.email }));
     }
   }, [user]);
@@ -50,72 +51,73 @@ const CustomerProfile = () => {
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div className="bg-white p-8 rounded-xl shadow border border-gray-100">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Profile Settings</h2>
+      <div className="card-premium p-10 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-5 pointer-events-none"></div>
+        <h2 className="text-3xl font-extrabold mb-8 text-navy-900 tracking-tight">Profile Settings</h2>
         
         {message.text && (
-          <div className={`p-4 rounded mb-6 font-medium ${message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+          <div className={`p-4 rounded-xl mb-8 font-bold ${message.type === 'success' ? 'bg-brand-50 text-brand-600' : 'bg-red-50 text-red-600'}`}>
             {message.text}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+            <label className="block text-sm font-bold text-navy-900 mb-2 uppercase tracking-wide">Full Name</label>
             <input
               type="text"
               name="name"
               required
               value={formData.name}
               onChange={handleChange}
-              className="w-full border border-gray-300 p-3 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="input-premium"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+            <label className="block text-sm font-bold text-navy-900 mb-2 uppercase tracking-wide">Email Address</label>
             <input
               type="email"
               name="email"
               required
               value={formData.email}
               onChange={handleChange}
-              className="w-full border border-gray-300 p-3 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="input-premium"
             />
           </div>
 
-          <div className="pt-4 border-t border-gray-200 mt-4">
-            <h3 className="text-lg font-medium text-gray-800 mb-4">Change Password (Optional)</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="pt-6 border-t border-gray-100 mt-8">
+            <h3 className="text-xl font-extrabold text-navy-900 mb-6">Security (Optional)</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                <label className="block text-sm font-bold text-navy-900 mb-2 uppercase tracking-wide">New Password</label>
                 <input
                   type="password"
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 p-3 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  className="input-premium"
                   placeholder="Leave blank to keep current"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+                <label className="block text-sm font-bold text-navy-900 mb-2 uppercase tracking-wide">Confirm New Password</label>
                 <input
                   type="password"
                   name="password_confirmation"
                   value={formData.password_confirmation}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 p-3 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  className="input-premium"
                 />
               </div>
             </div>
           </div>
 
-          <div className="pt-4">
+          <div className="pt-8 mt-2">
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 text-white font-bold p-3 rounded hover:bg-blue-700 transition disabled:opacity-50"
+              className="btn-primary w-full shadow-md"
             >
               {loading ? "Saving..." : "Save Changes"}
             </button>

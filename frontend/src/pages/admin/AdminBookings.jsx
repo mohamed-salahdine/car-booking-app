@@ -26,33 +26,33 @@ const AdminBookings = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div className="bg-white p-8 rounded-xl shadow border border-gray-100">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">All System Bookings</h2>
+      <div className="card-premium p-8">
+        <h2 className="text-3xl font-extrabold mb-8 text-navy-900 tracking-tight">All System Bookings</h2>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-gray-100">
+            <thead>
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Car</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dates</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Customer</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Car</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Dates</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Total</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Status</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-50">
               {bookings.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="px-6 py-4 text-center text-gray-500">No bookings found.</td>
+                  <td colSpan="5" className="px-6 py-8 text-center text-gray-500 font-medium">No bookings found.</td>
                 </tr>
               ) : (
                 bookings.map((booking) => (
-                  <tr key={booking.id} className="hover:bg-gray-50 transition">
-                    <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{booking.user?.name}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{booking.car?.make} {booking.car?.model}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{booking.start_date} to {booking.end_date}</td>
-                    <td className="px-6 py-4 whitespace-nowrap font-semibold text-green-600">${booking.total_price}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs font-bold rounded-full ${booking.status === "cancelled" ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>
+                  <tr key={booking.id} className="hover:bg-gray-50/50 transition-colors">
+                    <td className="px-6 py-5 whitespace-nowrap font-bold text-navy-900">{booking.user?.name}</td>
+                    <td className="px-6 py-5 whitespace-nowrap font-medium text-gray-600">{booking.car?.make} <span className="text-gray-900">{booking.car?.model}</span></td>
+                    <td className="px-6 py-5 whitespace-nowrap text-sm font-medium text-gray-500">{booking.start_date} <span className="mx-1 text-gray-300">to</span> {booking.end_date}</td>
+                    <td className="px-6 py-5 whitespace-nowrap font-extrabold text-brand-600">${booking.total_price}</td>
+                    <td className="px-6 py-5 whitespace-nowrap">
+                      <span className={`px-3 py-1.5 text-xs font-bold rounded-lg ${booking.status === "cancelled" ? "bg-red-50 text-red-600" : "bg-brand-50 text-brand-600"}`}>
                         {booking.status.toUpperCase()}
                       </span>
                     </td>

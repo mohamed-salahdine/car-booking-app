@@ -9,10 +9,10 @@ const NavItem = ({ to, label, onClick }) => {
     <Link
       to={to}
       onClick={onClick}
-      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+      className={`relative px-4 py-2 rounded-full text-sm font-bold transition-all duration-300 ${
         isActive
-          ? "bg-blue-50 text-blue-700"
-          : "text-gray-600 hover:bg-gray-50 hover:text-blue-600"
+          ? "text-brand-700 bg-brand-50"
+          : "text-gray-500 hover:text-navy-900 hover:bg-gray-50"
       }`}
     >
       {label}
@@ -31,17 +31,19 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
+    <nav className="bg-white/80 backdrop-blur-xl border-b border-gray-100 shadow-sm sticky top-0 z-50 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-20">
           {/* LOGO */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="bg-blue-600 text-white p-1.5 rounded-lg">
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="bg-navy-900 text-white p-2.5 rounded-xl group-hover:bg-brand-600 transition-colors duration-300 shadow-lg">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
               </svg>
             </div>
-            <span className="text-xl font-extrabold text-gray-900 tracking-tight">CarBooker</span>
+            <span className="text-2xl font-extrabold text-navy-900 tracking-tight transition-colors duration-300">
+              Luxe<span className="text-brand-600">Ride</span>
+            </span>
           </Link>
 
           {/* DESKTOP MENU */}
@@ -50,9 +52,9 @@ const Navbar = () => {
             {!user && (
               <>
                 <NavItem to="/" label="Browse Cars" />
-                <div className="border-l border-gray-200 h-6 mx-2"></div>
-                <Link to="/login" className="text-gray-600 hover:text-blue-600 px-4 py-2 text-sm font-medium transition">Sign In</Link>
-                <Link to="/register" className="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition shadow-sm">Create Account</Link>
+                <div className="border-l border-gray-200 h-6 mx-3"></div>
+                <Link to="/login" className="text-gray-600 hover:text-navy-900 px-4 py-2 text-sm font-medium transition-colors">Sign In</Link>
+                <Link to="/register" className="btn-primary ml-2 py-2 px-5 text-sm">Create Account</Link>
               </>
             )}
 
@@ -68,7 +70,7 @@ const Navbar = () => {
             {/* Admin Links */}
             {user?.role === "admin" && (
               <>
-                <NavItem to="/admin" label="Dashboard" />
+                <NavItem to="/admin" label="Overview" />
                 <NavItem to="/admin/fleet" label="Fleet" />
                 <NavItem to="/admin/bookings" label="Bookings" />
                 <NavItem to="/admin/users" label="Users" />
@@ -79,14 +81,14 @@ const Navbar = () => {
             {user && (
               <div className="flex items-center ml-4 pl-4 border-l border-gray-200 gap-4">
                 <div className="flex flex-col text-right hidden lg:flex">
-                  <span className="text-sm font-bold text-gray-900">{user.name}</span>
-                  <span className="text-xs text-gray-500 uppercase font-semibold">{user.role}</span>
+                  <span className="text-sm font-bold text-navy-900">{user.name}</span>
+                  <span className="text-xs text-brand-600 uppercase font-bold tracking-wider">{user.role}</span>
                 </div>
-                <div className="h-9 w-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold border border-blue-200">
+                <div className="h-10 w-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center font-bold text-lg border-2 border-white shadow-sm">
                   {user.name.charAt(0).toUpperCase()}
                 </div>
-                <button onClick={handleLogout} className="bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-lg text-sm font-medium transition">
-                  Logout
+                <button onClick={handleLogout} className="text-gray-500 hover:text-red-500 px-2 py-2 transition-colors ml-2" title="Logout">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                 </button>
               </div>
             )}
@@ -94,7 +96,7 @@ const Navbar = () => {
 
           {/* MOBILE MENU BUTTON */}
           <div className="md:hidden flex items-center">
-            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-500 hover:text-gray-900 focus:outline-none p-2">
+            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-600 hover:text-navy-900 focus:outline-none p-2 bg-gray-50 rounded-lg">
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {isMobileMenuOpen ? (
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -109,13 +111,13 @@ const Navbar = () => {
 
       {/* MOBILE MENU PANEL */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 shadow-lg absolute w-full">
-          <div className="px-4 pt-2 pb-6 space-y-2 flex flex-col">
+        <div className="md:hidden bg-white/95 backdrop-blur-3xl absolute w-full border-t border-gray-100 shadow-xl">
+          <div className="px-4 pt-4 pb-6 space-y-3 flex flex-col">
             {!user && (
               <>
                 <NavItem to="/" label="Browse Cars" onClick={() => setIsMobileMenuOpen(false)} />
                 <NavItem to="/login" label="Sign In" onClick={() => setIsMobileMenuOpen(false)} />
-                <Link to="/register" onClick={() => setIsMobileMenuOpen(false)} className="bg-blue-600 text-white text-center px-4 py-2 rounded-lg text-sm font-medium mt-2">
+                <Link to="/register" onClick={() => setIsMobileMenuOpen(false)} className="btn-primary text-center w-full mt-2">
                   Create Account
                 </Link>
               </>
@@ -131,7 +133,7 @@ const Navbar = () => {
 
             {user?.role === "admin" && (
               <>
-                <NavItem to="/admin" label="Dashboard" onClick={() => setIsMobileMenuOpen(false)} />
+                <NavItem to="/admin" label="Overview" onClick={() => setIsMobileMenuOpen(false)} />
                 <NavItem to="/admin/fleet" label="Fleet" onClick={() => setIsMobileMenuOpen(false)} />
                 <NavItem to="/admin/bookings" label="Bookings" onClick={() => setIsMobileMenuOpen(false)} />
                 <NavItem to="/admin/users" label="Users" onClick={() => setIsMobileMenuOpen(false)} />
@@ -139,12 +141,15 @@ const Navbar = () => {
             )}
 
             {user && (
-              <div className="border-t border-gray-100 mt-4 pt-4 flex flex-col gap-2">
-                <div className="px-4 py-2 bg-gray-50 rounded-lg">
-                  <p className="text-sm font-bold text-gray-900">Signed in as {user.name}</p>
-                  <p className="text-xs text-gray-500 uppercase">{user.role}</p>
+              <div className="border-t border-gray-100 mt-4 pt-4 flex flex-col gap-3">
+                <div className="px-4 py-3 bg-gray-50 rounded-xl flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-bold text-navy-900">{user.name}</p>
+                    <p className="text-xs text-brand-600 uppercase font-bold tracking-wider">{user.role}</p>
+                  </div>
                 </div>
-                <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition">
+                <button onClick={handleLogout} className="w-full text-left px-4 py-3 text-sm font-bold text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors flex items-center gap-2">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                   Logout
                 </button>
               </div>

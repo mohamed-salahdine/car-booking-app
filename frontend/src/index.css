@@ -1,2 +1,46 @@
-/* frontend/src/index.css */
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "sans-serif";
+  --font-heading: "Outfit", "sans-serif";
+  --color-brand-50: #f0fdfa;
+  --color-brand-100: #ccfbf1;
+  --color-brand-500: #14b8a6;
+  --color-brand-600: #0d9488;
+  --color-brand-900: #134e4a;
+  --color-navy-800: #1e293b;
+  --color-navy-900: #0f172a;
+}
+
+@layer base {
+  body {
+    @apply font-sans bg-gray-50 text-navy-800 antialiased selection:bg-brand-500 selection:text-white;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tight;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-[0_8px_30px_rgb(0,0,0,0.04)];
+  }
+  .glass-dark {
+    @apply bg-navy-900/80 backdrop-blur-lg border border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.1)];
+  }
+  .card-premium {
+    @apply bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all duration-300;
+  }
+  .btn-primary {
+    @apply bg-navy-900 text-white font-medium px-6 py-3 rounded-xl hover:bg-navy-800 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-300 active:translate-y-0;
+  }
+  .btn-accent {
+    @apply bg-brand-600 text-white font-medium px-6 py-3 rounded-xl hover:bg-brand-500 hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgba(20,184,166,0.3)] transition-all duration-300 active:translate-y-0;
+  }
+  .btn-secondary {
+    @apply bg-white text-navy-900 font-medium px-6 py-3 rounded-xl border border-gray-200 hover:border-gray-300 hover:bg-gray-50 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:translate-y-0;
+  }
+  .input-premium {
+    @apply w-full bg-gray-50 border border-gray-200 p-3.5 rounded-xl focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 focus:bg-white outline-none transition-all duration-200 text-gray-800 placeholder-gray-400;
+  }
+}

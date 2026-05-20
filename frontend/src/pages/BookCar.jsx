@@ -9,11 +9,6 @@ const BookCar = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  if (user && user.role === "admin") {
-    navigate("/");
-    return null;
-  }
-
   const [car, setCar] = useState(null);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -21,11 +16,17 @@ const BookCar = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (user && user.role === "admin") {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
     const fetchCar = async () => {
       try {
         const response = await api.get(`/cars/${id}`);
         setCar(response.data.data);
-      } catch (err) {
+      } catch {
         setError("Car not found.");
       } finally {
         setLoading(false);
@@ -76,47 +77,49 @@ const BookCar = () => {
     return (days * car.daily_price).toFixed(2);
   };
 
+  if (user && user.role === "admin") return null;
+
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-md border border-gray-100">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">
-        Book {car.make} {car.model}
+    <div className="max-w-3xl mx-auto mt-10 p-10 card-premium">
+      <h2 className="text-4xl font-extrabold mb-8 text-navy-900 tracking-tight">
+        Book <span className="text-brand-600">{car.make} {car.model}</span>
       </h2>
 
-      <div className="mb-6 p-4 bg-gray-50 rounded-lg flex justify-between items-center">
+      <div className="mb-8 p-6 bg-gray-50 rounded-2xl flex justify-between items-center border border-gray-100 shadow-sm">
         <div>
-          <p className="text-gray-600">Daily Rate:</p>
-          <p className="text-2xl font-bold text-blue-600">${car.daily_price}</p>
+          <p className="text-gray-500 font-bold uppercase tracking-wider text-xs mb-1">Daily Rate</p>
+          <p className="text-3xl font-extrabold text-navy-900">${car.daily_price}</p>
         </div>
         <div className="text-right">
-          <p className="text-gray-600">Estimated Total:</p>
-          <p className="text-2xl font-bold text-green-600">
+          <p className="text-gray-500 font-bold uppercase tracking-wider text-xs mb-1">Estimated Total</p>
+          <p className="text-3xl font-extrabold text-brand-600">
             ${calculateTotal()}
           </p>
         </div>
       </div>
 
       {error && (
-        <p className="text-red-500 bg-red-50 p-3 rounded mb-4">{error}</p>
+        <p className="text-red-600 font-bold bg-red-50 p-4 rounded-xl mb-6">{error}</p>
       )}
 
-      <form onSubmit={handleBooking} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <form onSubmit={handleBooking} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-gray-700 mb-1">Pick-up Date</label>
+            <label className="block text-sm font-bold text-navy-900 mb-2 uppercase tracking-wide">Pick-up Date</label>
             <input
               type="date"
-              className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500"
+              className="input-premium"
               value={startDate}
-              min={new Date().toISOString().split("T")[0]} // Cannot book in the past
+              min={new Date().toISOString().split("T")[0]}
               onChange={(e) => setStartDate(e.target.value)}
               required
             />
           </div>
           <div>
-            <label className="block text-gray-700 mb-1">Drop-off Date</label>
+            <label className="block text-sm font-bold text-navy-900 mb-2 uppercase tracking-wide">Drop-off Date</label>
             <input
               type="date"
-              className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500"
+              className="input-premium"
               value={endDate}
               min={startDate || new Date().toISOString().split("T")[0]}
               onChange={(e) => setEndDate(e.target.value)}
@@ -126,9 +129,9 @@ const BookCar = () => {
         </div>
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-bold text-lg mt-4"
+          className="btn-primary w-full text-lg py-4 mt-8"
         >
-          Confirm Booking
+          Confirm Reservation
         </button>
       </form>
     </div>

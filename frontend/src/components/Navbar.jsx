@@ -80,7 +80,6 @@ const Navbar = () => {
             {!user && (
               <>
                 <NavItem to="/" label="Home" />
-                <NavItem to="/" label="Browse Cars" />
                 <div className="w-px h-6 bg-gray-200 mx-4"></div>
                 <Link to="/login" className="text-sm font-semibold text-gray-600 hover:text-brand-600 px-4 transition-colors">Sign In</Link>
                 <Link to="/register" className="btn-primary ml-2 px-5 py-2 text-sm">Create Account</Link>
@@ -171,7 +170,6 @@ const Navbar = () => {
           {!user && (
             <>
               <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-3 text-sm font-semibold text-gray-700 hover:text-brand-600 hover:bg-gray-50 rounded-lg">Home</Link>
-              <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-3 text-sm font-semibold text-gray-700 hover:text-brand-600 hover:bg-gray-50 rounded-lg">Browse Cars</Link>
               <div className="h-px w-full bg-gray-100 my-2"></div>
               <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-3 text-sm font-semibold text-gray-700 hover:text-brand-600 hover:bg-gray-50 rounded-lg">Sign In</Link>
               <div className="px-4 mt-2">
